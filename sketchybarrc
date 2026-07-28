@@ -27,6 +27,7 @@ fi
 ## Fallback defaults if variables unset
 : "${NOTCH_WIDTH:=180}"                                      # <int>
 : "${MUSIC_INFO_WIDTH:=80}"                                  # <int>
+: "${MUSIC_SWAP_THRESHOLD:=5}"                                # <int>
 : "${CPU_UPDATE_FREQ:=2}"                                    # <int>
 : "${MENUBAR_AUTOHIDE:=True}"                                # <true|false>
 : "${GITHUB_TOKEN:="~/.github_token"}"                       # <path>
@@ -100,17 +101,17 @@ bar=(
 	topmost=everything
 	sticky=on
 	position=top
-	#shadow=on
-	#shadow.color=$SHADOW_COLOR
-	#shadow.angle=45
-	#shadow.distance=2
+	shadow=on
+	shadow.color=$SHADOW_COLOR
+	shadow.angle=45
+	shadow.distance=2
 	padding_left=0
 	padding_right=$X_BAR_PADDING
 	color="$BAR_COLOR"
 	border_width=1
 	border_color=$BORDER_COLOR
 	corner_radius=$BAR_CORNER_RADIUS
-	blur_radius=14
+	blur_radius=50
 	notch_width=$NOTCH_WIDTH
 )
 
@@ -132,17 +133,16 @@ defaults=(
 	popup.background.corner_radius=6
 	popup.background.border_color=$POPUP_BORDER_COLOR
 	popup.background.color=$POPUP_BACKGROUND_COLOR
-	popup.blur_radius=20
+	popup.blur_radius=26
 	popup.background.shadow.drawing=on
 )
 
 zones=(
 	background.height=$(($BAR_HEIGHT - 8))
-	background.border_width=2
-	background.border_color=$HIGH_MED
+	background.border_width=1
+	background.border_color=$BORDER_COLOR
 	background.color=$OVERLAY
 	background.corner_radius=$ZONE_CORNER_RADIUS
-	blur_radius=2
 	#background.clip=1.0
 )
 

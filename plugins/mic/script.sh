@@ -50,9 +50,9 @@ unmute_mic() {
 toggle_mic() {
   VOLUME=$(osascript -e 'set ivol to input volume of (get volume settings)')
   if [ $VOLUME = 0 ]; then
-    update_label
     unmute_mic
   else
+    update_label
     mute_mic
   fi
 }

@@ -2,7 +2,7 @@
 
 ## Scripts
 SCRIPT_VOLUME_CLICK="export PATH=$PATH; $RELPATH/plugins/volume/click.sh"
-SCRIPT_VOLUME="export PATH=$PATH; $RELPATH/plugins/volume/script.sh"
+SCRIPT_VOLUME="export PATH=$PATH; $RELPATH/plugins/volume/script.sh $NOTCH_WIDTH $BAR_HEIGHT"
 
 ## Item properties
 volume_slider=(

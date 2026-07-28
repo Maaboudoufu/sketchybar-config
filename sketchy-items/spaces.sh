@@ -21,6 +21,7 @@ dummy_space=(
 	label.y_offset=-1
 	label.drawing=on
 	label.width=0
+	updates=on
 )
 
 separator=(
@@ -70,7 +71,7 @@ addAerospaceSpaces() {
 		space=("${dummy_space[@]}")
 		space+=(
 			icon="$sid"
-			script="$SCRIPT_SPACES $sid"
+			script="$SCRIPT_SPACES $sid $HIDE_EMPTY_SPACES"
 			drawing=on
 		)
 
@@ -141,8 +142,19 @@ case "$WINDOW_MANAGER" in
 	SCRIPT_SPACES="export PATH=$PATH; $RELPATH/plugins/spaces/aerospace/script-space.sh"
 	SCRIPT_SPACE_WINDOWS="export PATH=$PATH; $RELPATH/plugins/spaces/aerospace/script-windows.sh"
 
-	# Query all workspaces available
-	SPACES=($(aerospace list-workspaces --all 2>/dev/null))
+	# AeroSpace's CLI may be installed before its server is ready during login.
+	# Retry briefly so a transient startup race does not leave the bar with no
+	# workspace items until the next manual reload.
+	SPACES=()
+	for _ in {1..5}; do
+		SPACES=($(aerospace list-workspaces --all 2>/dev/null))
+		[ ${#SPACES[@]} -gt 0 ] && break
+		sleep 0.2
+	done
+
+	if [ ${#SPACES[@]} -eq 0 ]; then
+		sendErr "AeroSpace returned no workspaces; workspace items were not added." "info"
+	fi
 
 	# Trigger helper to add necessary spaces
 	addAerospaceSpaces

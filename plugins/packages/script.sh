@@ -1,24 +1,59 @@
 #!/bin/bash
-list_nix_packages() {
-  for x in $(nix-store --query --requisites "$1" 2>/dev/null); do
-    if [ -d "$x" ]; then
-      echo "$x"
+
+# This file keeps its historical path because the More-menu item id is
+# intentionally preserved. It now displays Claude Code subscription usage.
+
+RELPATH="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
+source "$RELPATH/set_colors.sh"
+
+set_usage_label() {
+  local five_hour="$1" weekly="$2" label color max
+
+  if [[ "$five_hour" =~ ^[0-9]+$ && "$weekly" =~ ^[0-9]+$ ]]; then
+    label="${five_hour}% · ${weekly}%"
+    max=$(( five_hour > weekly ? five_hour : weekly ))
+    if ((max >= 90)); then
+      color=$CRITICAL
+    elif ((max >= 70)); then
+      color=$WARN
+    elif ((max >= 50)); then
+      color=$NOTICE
+    else
+      color=$TEXT
     fi
-  done | cut -d- -f2- |
-    egrep '([0-9]{1,}\.)+[0-9]{1,}' |
-    egrep -v '\-doc$|\-man$|\-info$|\-dev$|\-bin$|^nixos-system-nixos-' |
-    uniq |
-    wc -l
+  else
+    label="--"
+    color=$TEXT
+  fi
+
+  sketchybar --set "${NAME:?}" label="$label" label.color=$color 2>/dev/null
 }
 
-### Sum of all packages
+claude_usage() {
+  local credentials token response
 
-packages_total=$(($(list_nix_packages "/nix/var/nix/profiles/default") + \
-$(list_nix_packages "/run/current-system") + \
-$(list_nix_packages "$HOME/.nix-profile") + \
-$(ls /opt/homebrew/Caskroom 2>/dev/null | wc -l) + \
-$(ls /opt/homebrew/Cellar 2>/dev/null | wc -l) + \
-$(ls $HOME/local/Caskroom 2>/dev/null | wc -l) + \
-$(ls $HOME/local/Cellar 2>/dev/null | wc -l))) # Nix default + Nix system + Nix user
+  if [[ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]]; then
+    token="$CLAUDE_CODE_OAUTH_TOKEN"
+  elif [[ -n "${CLAUDE_USAGE_TOKEN_FILE:-}" && -r "$CLAUDE_USAGE_TOKEN_FILE" ]]; then
+    token="$(<"$CLAUDE_USAGE_TOKEN_FILE")"
+  else
+    credentials="$(security find-generic-password \
+      -s "${CLAUDE_KEYCHAIN_SERVICE:-Claude Code-credentials}" -w 2>/dev/null)" || return 1
+    token="$(printf '%s' "$credentials" | jq -er '.claudeAiOauth.accessToken // empty' 2>/dev/null)" || return 1
+  fi
 
-sketchybar --set $NAME label="$packages_total"
+  [[ -n "$token" ]] || return 1
+  response="$(curl --fail --silent --show-error \
+    --connect-timeout 3 --max-time 10 \
+    -H "Authorization: Bearer $token" \
+    -H "Accept: application/json" \
+    "${CLAUDE_USAGE_URL:-https://api.anthropic.com/api/oauth/usage}" 2>/dev/null)" || return 1
+
+  printf '%s' "$response" | jq -er '
+    def pct: select(type == "number" and . >= 0 and . <= 100) | round;
+    "\(.five_hour.utilization | pct) \(.seven_day.utilization | pct)"
+  ' 2>/dev/null
+}
+
+read -r five_hour weekly <<<"$(claude_usage || true)"
+set_usage_label "$five_hour" "$weekly"

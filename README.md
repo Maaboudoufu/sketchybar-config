@@ -1,37 +1,24 @@
 # Utility Bar
-## Rosé Pine Moon (and more !)
+## Rosé Pine Moon + Liquid Glass
 
-> [!WARNING] 
-> In its current state the bash-based config is an absolute mess, you may want to switch to the lua-based config as this bash config won't receive any further updates.
-> You can check the branch [lua-port](https://github.com/Kcraft059/sketchybar-config/tree/lua-port), there are not much info for now as it is still in early RC and misses some features but it implements all base feature more reliably.
-> As of right-now it only supports yabai as WM. 
-
-
-<div align=center>
-<img width="1470" height="40" alt="Screenshot 2025-08-21 at 12 39 13" src="https://github.com/user-attachments/assets/230c1063-cb96-4686-9745-270335e650e5" />
-<img width="1470" height="40" alt="Screenshot 2025-08-21 at 12 39 39" src="https://github.com/user-attachments/assets/c34be030-27f3-4bf4-a7df-d1119208c824" />
-
-</div>
-
-
-This is a config I made which aggregate functionnality and aesthetics, made in mind to be Nix-Compliant.
+A personal fork of [Kcraft059/sketchybar-config](https://github.com/Kcraft059/sketchybar-config), aggregating functionality and aesthetics, made with Nix-Compliance in mind.
 
 See https://github.com/FelixKratz/SketchyBar/discussions/47#discussioncomment-14058252
 
-## A little demonstration of the functionalities :
+## What's different in this fork
 
-<img width="2940" height="1912" alt="Screenshot 2025-08-09 at 18 49 42" src="https://github.com/user-attachments/assets/23066c77-1b31-4372-a737-8bf450af1d80" />
-<img width="2940" height="1912" alt="Screenshot 2025-08-09 at 18 55 12" src="https://github.com/user-attachments/assets/0406413d-4468-4ba7-b55d-1c59e7e52cfb" />
-
-
-https://github.com/user-attachments/assets/c9db52a4-d7fe-4daa-a904-cd201476556c
+- **Liquid Glass theme** — the bar and item chips use a low-opacity neutral tint plus a strong background blur and a translucent rim border, so the bar picks up the color of whatever's behind it instead of carrying a fixed opaque color, similar to macOS's own Liquid Glass material.
+- **Claude Code & Codex usage indicators** — menu bar items showing 5-hour and weekly rate-limit usage for both, with official icons (a Claude mascot image and the Codex glyph) and color-coded severity.
+- **`HIDE_EMPTY_SPACES`** — optionally hide workspace items that have no windows (instead of always showing every workspace).
+- **Notch-aware music repositioning** — on Aerospace, the now-playing widget swaps from left-of-notch to right-of-notch once the visible workspace list grows past `MUSIC_SWAP_THRESHOLD`, so it doesn't collide with a long workspace list.
+- Misc. reliability fixes to the Aerospace workspace/window icon scripts and the volume-triggered music slide-away animation.
 
 ## Install :
 
 With the installer :
 
 ```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kcraft059/sketchybar-config/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Maaboudoufu/sketchybar-config/main/install.sh)"
 ```
 
 <details>
@@ -58,7 +45,7 @@ brew install --cask font-SF-Pro font-sketchybar-app-font
 
 mkdir -p ~/.config
 cd ~/.config/
-git clone https://www.github.com/Kcraft059/sketchybar-config sketchybar
+git clone https://www.github.com/Maaboudoufu/sketchybar-config sketchybar
 
 sketchybar --reload
 ```
@@ -68,7 +55,6 @@ For yabai users : `yabai -m config external_bar all:36:0`
 </details>
 
 For Nix-Darwin users see : [here](#nix--nix-darwin-integration)
-or alternatively https://github.com/Kcraft059/Nix-Config/blob/master/home/darwin/sketchybar.nix
 
 ## Aerospace Integration
 
@@ -177,8 +163,10 @@ BAR_TRANSPARENCY=true
 BAR_LOOK="plain"        # Aspect of the bar 
 NOTCH_WIDTH=180         # Reserved width for the display notch
 MUSIC_INFO_WIDTH=80     # Width (px) for music title & subtitle labels
+MUSIC_SWAP_THRESHOLD=5  # Visible workspace count past which music swaps to right-of-notch (Aerospace only)
 CPU_UPDATE_FREQ=2       # Seconds between CPU graph samples
 MENUBAR_AUTOHIDE=True   # Whether to automatically hide the menu titles
+HIDE_EMPTY_SPACES=false # Only show workspaces that have windows (plus the focused one)
 GITHUB_TOKEN="~/.github_token" # Path to your GitHub Classic token (for notifications)
 WIFI_UNREDACTOR="~/Applications/wifi-unredactor.app" # Wifi unredactor path
 ```
@@ -238,7 +226,7 @@ There are multiple ways to integrate these settings through Nix flakes.
 ```nix
 {
   sketchybar-config = {
-    url = "github:kcraft059/sketchybar-config";
+    url = "github:Maaboudoufu/sketchybar-config";
     flake = false;
   };
 }
@@ -293,3 +281,7 @@ An opinionated module integrating this repo as a flake input :
 - CPU not showing: Ensure `cpu.sh` is sourced (it is by default) and run `sketchybar --query item graph.percent` to verify presence.
 - Music overlapping notch: Bump `NOTCH_WIDTH` in small increments (e.g. +10) or reduce `MUSIC_INFO_WIDTH`.
 - Config not applied: Echo inside your `config.sh` or run `grep NOTCH_WIDTH ~/.config/sketchybar/sketchybarrc` to confirm dynamic variable usage.
+
+## Credits
+
+Based on [Kcraft059/sketchybar-config](https://github.com/Kcraft059/sketchybar-config). See that repo for the lua-based rewrite and further upstream discussion.

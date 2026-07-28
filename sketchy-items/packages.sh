@@ -1,31 +1,40 @@
 #!/bin/bash
 
 ## Scripts
-SCRIPT_PKGS="export PATH=$PATH; $RELPATH/plugins/packages/script.sh"
+# Keep the existing item id so the More-menu layout remains unchanged.
+SCRIPT_CLAUDE="export PATH=$PATH; $RELPATH/plugins/packages/script.sh"
+
+## Mascot image (native asset is 128x128, scaled down to fit the bar height)
+CLAUDE_MASCOT_MARGIN=6
+CLAUDE_MASCOT_SIZE=$(($BAR_HEIGHT - $CLAUDE_MASCOT_MARGIN * 2))
+CLAUDE_MASCOT_SCALE=$(bc <<<"scale=4; $CLAUDE_MASCOT_SIZE / 128")
 
 ## Item properties
-pkgs=(
+claude=(
   drawing=off
-  script="$SCRIPT_PKGS"
-  #click_script="$SCRIPT_CLICK_PKGS"
-  icon=􀐛
-  icon.color=$WARN
-  icon.font="$FONT:Regular:14.0"
-  icon.padding_left=0 #$(($OUTER_PADDINGS - 4))
-  icon.padding_right=0
-  label=""
-  label.font="$FONT:Semibold:10.0"
-  label.padding_left=$INNER_PADDINGS
-  label.padding_right=6
-  padding_left=$INNER_PADDINGS
-  padding_right=$OUTER_PADDINGS
-  update_freq=0
+  script="$SCRIPT_CLAUDE"
+  icon=" "
+  icon.drawing=on
+  icon.width=$CLAUDE_MASCOT_SIZE
+  icon.background.drawing=on
+  icon.background.image="$RELPATH/assets/claude-code-mascot.png"
+  icon.background.image.scale=$CLAUDE_MASCOT_SCALE
+  icon.background.height=$CLAUDE_MASCOT_SIZE
+  icon.background.corner_radius=4
+  icon.background.x_offset=-2
+  label="--"
+  label.font="$FONT:Medium:12.0"
+  label.padding_left=$(($INNER_PADDINGS - 2))
+  label.padding_right=3
+  padding_left=$(($INNER_PADDINGS - 2))
+  padding_right=$(($OUTER_PADDINGS - 2))
+  update_freq=300
   updates=when_shown
 )
 
 ## Item addition
 sketchybar --add item moremenu.pkgs right \
-  --set moremenu.pkgs "${pkgs[@]}" \
+  --set moremenu.pkgs "${claude[@]}" \
   --subscribe moremenu.pkgs more-menu-update
 
-sendLog "Added package item" "vomit"
+sendLog "Added Claude usage item" "vomit"

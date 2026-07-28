@@ -5,11 +5,12 @@ SCRIPT_POPUP_TOGGLE="export PATH=$PATH; $RELPATH/plugins/logo/script.sh \"$FONT\
 
 ## Item properties
 logo=(
-  icon=􀆔
+  icon=
   padding_left=$X_BAR_PADDING
   padding_right=10
-  icon.font="$FONT:Semibold:14.0"
+  icon.font="$FONT:Semibold:24.0"
   icon.color=$TEXT
+  icon.y_offset=1
   icon.padding_left=8
   icon.padding_right=8
   script="$SCRIPT_POPUP_TOGGLE"

@@ -5,7 +5,7 @@ SCRIPT_CALENDAR="export PATH=$PATH; $RELPATH/plugins/calendar/script.sh"
 SCRIPT_CLICK_CALENDAR="export PATH=$PATH; $RELPATH/plugins/calendar/click.sh"
 
 calendar=(
-  icon="$(date '+%a %d. %b')"
+  icon="$(LC_TIME=ja_JP.UTF-8 date '+%-m月%-d日(%a)')"
   label="$(date '+%H:%M')"
   icon.font="$FONT:Black:12.0"
   icon.padding_right=0

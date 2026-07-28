@@ -2,6 +2,7 @@
 
 # Get workspace ID from command line argument or extract from NAME
 WORKSPACE_ID=${1:-${NAME#space.}}
+HIDE_EMPTY_SPACES=${2:-false}
 
 # Set RELPATH for accessing other scripts
 export RELPATH=$(dirname $0)/../../..
@@ -23,15 +24,9 @@ else
 fi
 
 update() {
-
-	WIDTH="dynamic"
-	if [ "$SELECTED" = "true" ]; then
-		WIDTH="0"
-	fi
-
 	sketchybar --animate tanh 20 --set $NAME \
 		icon.highlight=$SELECTED \
-		label.width=$WIDTH
+		label.width=dynamic
 
 }
 
@@ -58,7 +53,7 @@ case "$SENDER" in
 	;;
 *)
 	# Update icons
-	$RELPATH/plugins/spaces/aerospace/script-windows.sh "$WORKSPACE_ID"
+	$RELPATH/plugins/spaces/aerospace/script-windows.sh "$WORKSPACE_ID" "$HIDE_EMPTY_SPACES"
 	# Update focused state
 	update
 	;;

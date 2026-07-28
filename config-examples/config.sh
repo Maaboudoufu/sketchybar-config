@@ -9,6 +9,11 @@ NOTCH_WIDTH=180
 # Music title/subtitle info width (px)
 MUSIC_INFO_WIDTH=80
 
+# Number of visible workspace icons above which the music widget hops from
+# the left of the notch to the right, to stop the two from colliding
+# (aerospace only)
+MUSIC_SWAP_THRESHOLD=5
+
 # CPU graph update frequency (seconds)
 CPU_UPDATE_FREQ=2
 

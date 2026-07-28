@@ -32,7 +32,7 @@ CONFIG_DIR="$HOME/.config/sketchybar"
 ### Clone config
 log "Cloning sketchybar-config repository..."
 rm -rf "$CONFIG_DIR"
-git clone --depth 1 https://github.com/Kcraft059/sketchybar-config "$CONFIG_DIR"
+git clone --depth 1 https://github.com/Maaboudoufu/sketchybar-config "$CONFIG_DIR"
 success "Cloned sketchybar-config repository."
 
 ### Install dependencies

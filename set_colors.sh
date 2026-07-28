@@ -23,7 +23,7 @@ case "$COLOR_SCHEME" in
 # Rosé pine Moon theme
 "rosepine-moon")
 	if [[ $BAR_TRANSPARENCY == true ]]; then
-		TFrate=160
+		TFrate=36 # ~14% alpha - pushed well past SketchyBar's reference-config alpha for a stronger glass look
 	else
 		TFrate=255
 	fi
@@ -35,7 +35,10 @@ case "$COLOR_SCHEME" in
 	# Default Theme colors
 	export BASE=0x${TFp}232136
 	export SURFACE=0x${TFp}2a273f
-	export OVERLAY=0x${TFp}393552
+	# Item chips get no blur of their own (sketchybar only blurs the bar/popup layer), so they sit
+	# on top of the bar's already-blurred surface as a flat tint — keep them at the slightly
+	# stronger TFs tier so they still read as distinct glass "buttons" against the bar.
+	export OVERLAY=0x${TFs}393552
 	export MUTED=0x${TFp}6e6a86
 	export HIGH_LOW=0x${TFs}2a283e
 	export HIGH_MED=0x${TFs}44415a
@@ -53,22 +56,16 @@ case "$COLOR_SCHEME" in
 	export TRANSPARENT=0x00000000
 
 	# General bar colors
-	if [ $(echo $OS_VERSION | awk -F. '{print $1}') -gt 15 ]; then
-		export BAR_COLOR=0x${TFp}232137
-		export BORDER_COLOR=0x60808080
-		#export BORDER_COLOR=0x${TFp}4D525B
-	else
-		export BAR_COLOR=0x${TFp}414354
-		export BORDER_COLOR=0x${TFp}4D525B
-	fi
+	export BAR_COLOR=0x${TFp}232137
+	export BORDER_COLOR=0x4DFFFFFF # translucent white rim, like a glass edge highlight
 
 	export ICON_COLOR=$TEXT  # Color of all icons
 	export LABEL_COLOR=$TEXT # Color of all labels
 
-	export POPUP_BACKGROUND_COLOR=0x${TFp}393552
-	export POPUP_BORDER_COLOR=$HIGH_MED
+	export POPUP_BACKGROUND_COLOR=0x${TFs}393552
+	export POPUP_BORDER_COLOR=$BORDER_COLOR
 
-	export SHADOW_COLOR=$TEXT
+	export SHADOW_COLOR=0x50000000 # translucent black, for the floating-glass drop shadow
 	;;
 
 # Catpuccin Mocha theme
