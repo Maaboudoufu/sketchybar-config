@@ -1,16 +1,18 @@
 #!/bin/bash
-source ./log_handler.sh ## Sourcing needed because it can be called outside of sketchybarrc sourcing
-OS_VERSION="$(sw_vers -productVersion)"
+## Resolve relative to this file, not the caller's cwd: plugin scripts are the
+## main consumers and sketchybar only happens to run them from the config dir.
+__COLORS_DIR="${BASH_SOURCE[0]%/*}" # no dirname fork; every source path has a /
+source "$__COLORS_DIR/log_handler.sh" ## Sourcing needed because it can be called outside of sketchybarrc sourcing
 
 # Config sourcing
 if [[ -n "$SKETCHYBAR_CONFIG" && -f "$SKETCHYBAR_CONFIG" ]]; then
 	# External override path (useful for Nix)
 	# shellcheck disable=SC1090
 	source "$SKETCHYBAR_CONFIG"
-elif [[ -f ./config.sh ]]; then
+elif [[ -f "$__COLORS_DIR/config.sh" ]]; then
 	# Local config file in repository
 	# shellcheck disable=SC1091
-	source ./config.sh
+	source "$__COLORS_DIR/config.sh"
 fi
 
 # Defaults
@@ -23,14 +25,16 @@ case "$COLOR_SCHEME" in
 # Rosé pine Moon theme
 "rosepine-moon")
 	if [[ $BAR_TRANSPARENCY == true ]]; then
-		TFrate=36 # ~14% alpha - pushed well past SketchyBar's reference-config alpha for a stronger glass look
+		TFrate=20 # ~8% alpha - very light tint, blur does most of the work now that shadow bleed is fixed
 	else
 		TFrate=255
 	fi
 
-	TFp=$(echo "obase=16; $TFrate" | bc) # Set primary transparency factor
-	[ $((TFrate + 20)) -lt 255 ] && TFrate=$(($TFrate + 20))
-	TFs=$(echo "obase=16; $TFrate" | bc) # Set secondary transparency factor
+	# %02X, not bc: bc drops the leading zero for values < 16, which yields a
+	# 9-character colour like 0xA232136 that sketchybar cannot parse.
+	printf -v TFp '%02X' "$TFrate" # Set primary transparency factor
+	[ $((TFrate + 20)) -lt 255 ] && TFrate=$((TFrate + 20))
+	printf -v TFs '%02X' "$TFrate" # Set secondary transparency factor
 
 	# Default Theme colors
 	export BASE=0x${TFp}232136
@@ -57,7 +61,7 @@ case "$COLOR_SCHEME" in
 
 	# General bar colors
 	export BAR_COLOR=0x${TFp}232137
-	export BORDER_COLOR=0x4DFFFFFF # translucent white rim, like a glass edge highlight
+	export BORDER_COLOR=0x5AFFFFFF # translucent white rim, like a glass edge highlight
 
 	export ICON_COLOR=$TEXT  # Color of all icons
 	export LABEL_COLOR=$TEXT # Color of all labels

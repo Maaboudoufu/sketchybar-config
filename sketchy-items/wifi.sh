@@ -8,7 +8,7 @@ SCRIPT_CLICK_WIFI="export PATH=$PATH; $RELPATH/plugins/wifi/click.sh"
 wifi=(
   script="$SCRIPT_WIFI"
   click_script="$SCRIPT_CLICK_WIFI"
-  label="Searching…"
+  label="検索中…"
   icon=􀙥
   icon.color=$SUBTLE
   icon.padding_right=0

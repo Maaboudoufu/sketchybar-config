@@ -1,5 +1,6 @@
 #!/bin/bash
 export PATH=/opt/homebrew/bin:$PATH
+source "$(dirname "$0")/collision.sh"
 
 # Move the music widget from q (left of notch) to e (right of notch) once
 # more than THRESHOLD workspace icons are actually visible — past that point
@@ -56,12 +57,26 @@ fi
 
 # padding_left=0 / background.height=$ARTWORK_HEIGHT / padding_right=0 /
 # label.font.size below reset any in-progress "slide toward the notch" from
-# plugins/volume/script.sh (volume changes temporarily shift these while
-# music is at e) — a real q<->e transition mid-slide would otherwise leave
-# music stuck slid away, shrunk and tiny-fonted, since that script only knows
-# how to undo its own shift, not react to a position change underneath it.
-# Font sizes match music.sh's music_title/music_subtitle definitions.
+# plugins/music/collision.sh's consumers (volume/more-menu/cpu-graph
+# temporarily shift these while music is at e) — a real q<->e transition
+# mid-shrink would otherwise leave music stuck shrunk and tiny-fonted, since
+# those consumers only know how to undo their own shift, not react to a
+# position change underneath them. Font sizes match music.sh's
+# music_title/music_subtitle definitions.
+#
+# background.image.scale is the one property collision.sh's shrink touches
+# that this reset didn't otherwise restore: read whatever it stashed as the
+# pre-shrink original and put that back too, then wipe its bookkeeping
+# outright, since a position change makes any in-flight shrink meaningless
+# (collision.sh's own release() call, whenever the still-open consumer
+# eventually makes it, is already a no-op once its marker file is gone).
+reset_scale=()
+if [ -f "$MUSIC_SHRINK_SCALE_FILE" ]; then
+	reset_scale=(background.image.scale="$(cat "$MUSIC_SHRINK_SCALE_FILE")")
+	rm -rf "$MUSIC_SHRINK_DIR" "$MUSIC_SHRINK_SCALE_FILE"
+fi
+
 sketchybar --animate tanh 20 \
-	--set music position=$pos padding_left=0 background.height=$ARTWORK_HEIGHT \
+	--set music position=$pos padding_left=0 background.height=$ARTWORK_HEIGHT "${reset_scale[@]}" \
 	--set music.title position=$pos padding_left=$title_padding_left label.align=$align label.font.size=10.0 \
 	--set music.subtitle position=$pos padding_left=$subtitle_padding_left label.align=$align padding_right=0 label.font.size=9.0

@@ -5,6 +5,17 @@
 
 RELPATH="$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)"
 source "$RELPATH/set_colors.sh"
+source "$RELPATH/plugins/usage/lib.sh"
+
+MASCOT_SIZE="${1:-22}"
+MASCOT_SCALE="${2:-0.17}"
+FONT="${3:-SF Pro}"
+
+# This slot doubles as the RAM readout. In system mode hand off to system.sh,
+# which renders RAM here and CPU into moremenu.user from a single macmon sample.
+if usage_in_system_mode; then
+  exec "$RELPATH/plugins/usage/system.sh" "$FONT"
+fi
 
 set_usage_label() {
   local five_hour="$1" weekly="$2" label color max
@@ -12,21 +23,21 @@ set_usage_label() {
   if [[ "$five_hour" =~ ^[0-9]+$ && "$weekly" =~ ^[0-9]+$ ]]; then
     label="${five_hour}% · ${weekly}%"
     max=$(( five_hour > weekly ? five_hour : weekly ))
-    if ((max >= 90)); then
-      color=$CRITICAL
-    elif ((max >= 70)); then
-      color=$WARN
-    elif ((max >= 50)); then
-      color=$NOTICE
-    else
-      color=$TEXT
-    fi
+    usage_color "$max"
+    color=$USAGE_COLOR
   else
     label="--"
     color=$TEXT
   fi
 
-  sketchybar --set "${NAME:?}" label="$label" label.color=$color 2>/dev/null
+  # Restore the mascot icon: system mode swaps it for an SF Symbols CPU glyph,
+  # and this script is what runs on the way back.
+  usage_render ai_pkgs --set "${NAME:?}" label="$label" label.color=$color \
+    icon=" " \
+    icon.background.drawing=on \
+    icon.background.image="$RELPATH/assets/claude-code-mascot.png" \
+    icon.background.image.scale=$MASCOT_SCALE \
+    icon.background.height=$MASCOT_SIZE 2>/dev/null
 }
 
 claude_usage() {

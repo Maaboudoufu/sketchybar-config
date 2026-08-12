@@ -7,10 +7,12 @@
 ##
 
 ## Settings & sourcing
+# Resolve relative to this file, not the caller's cwd (see set_colors.sh).
+__LOG_DIR="${BASH_SOURCE[0]%/*}" # no dirname fork; see set_colors.sh
 if [[ -n "$SKETCHYBAR_CONFIG" && -f "$SKETCHYBAR_CONFIG" ]]; then
 	source "$SKETCHYBAR_CONFIG"
-elif [[ -f "./config.sh" ]]; then
-	source "./config.sh"
+elif [[ -f "$__LOG_DIR/config.sh" ]]; then
+	source "$__LOG_DIR/config.sh"
 fi
 
 : "${LOG_LEVEL:="none"}"

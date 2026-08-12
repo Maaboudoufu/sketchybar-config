@@ -12,7 +12,7 @@ menuitems+=(
 ## Scripts
 SCRIPT_SEPARATOR_MORE="export PATH=$PATH; \
 $RELPATH/plugins/more-menu/script.sh \
-\"${menuitems[*]}\" $INNER_PADDINGS \"$FONT\" "
+\"${menuitems[*]}\" $INNER_PADDINGS \"$FONT\" $NOTCH_WIDTH $BAR_HEIGHT"
 
 ## Item properties
 separator=(

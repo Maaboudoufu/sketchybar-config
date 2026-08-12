@@ -30,8 +30,17 @@ done
 CONFIG_DIR="$HOME/.config/sketchybar"
 
 ### Clone config
+# Move the old config aside rather than `rm -rf` it. config.sh is gitignored,
+# so it exists only on disk — a blind delete here permanently loses the user's
+# own settings (and anything else untracked) with no way to recover them.
+if [ -e "$CONFIG_DIR" ]; then
+	BACKUP_DIR="$CONFIG_DIR.backup-$(date +%Y%m%d-%H%M%S)"
+	mv "$CONFIG_DIR" "$BACKUP_DIR"
+	success "Existing config preserved at $BACKUP_DIR"
+	log "Copy your settings back afterwards: cp \"$BACKUP_DIR/config.sh\" \"$CONFIG_DIR/\""
+fi
+
 log "Cloning sketchybar-config repository..."
-rm -rf "$CONFIG_DIR"
 git clone --depth 1 https://github.com/Maaboudoufu/sketchybar-config "$CONFIG_DIR"
 success "Cloned sketchybar-config repository."
 
@@ -76,12 +85,10 @@ if [[ "$install_wifi_unredactor" =~ ^[Yy]$ ]]; then
 	success "Cloned noperator/wifi-unredactor repository."
 	log "Running wifi-unredactor installer..."
 	cd $TEMP_DIR
-	./build-and-install.sh
-	if [ $? -eq 0 ]; then
-		success "Installed and compiled wifi-unredactor in ~/Applications (do not move)."
-	else 
-		error "Error compiling wifi-unredactor."
-	fi
+	# `set -e` aborts on a failed build before any `$?` test could run, so the
+	# diagnostic has to hang off the command itself.
+	./build-and-install.sh || error "Error compiling wifi-unredactor."
+	success "Installed and compiled wifi-unredactor in ~/Applications (do not move)."
 	cd "$PREVIOUS_DIR"
 	rm -rf "$TEMP_DIR"
 	success "Cleaned $TEMP_DIR."
@@ -100,7 +107,9 @@ if [[ "$enable_github" =~ ^[Yy]$ ]]; then
 		chmod 600 "$HOME/.github_token"
 		success "GitHub token saved to ~/.github_token (permissions set to 600)."
 	else
-		error "No token entered. Skipping GitHub notifications setup."
+		# log, not error: error() exits 1, which skipped the reload below and
+		# left a cloned config that was never actually loaded.
+		log "No token entered. Skipping GitHub notifications setup."
 	fi
 else
 	log "Skipped GitHub notifications setup."

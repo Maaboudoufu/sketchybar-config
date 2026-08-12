@@ -28,10 +28,10 @@ MENU_CONTROLS=(
 )
 
 # GITHUB Token path for notifications 
-GITHUB_TOKEN="~/.github_token"
+GITHUB_TOKEN="$HOME/.github_token" # $HOME, not ~: a quoted tilde stays literal
 
 # Wifi unredactor path
-WIFI_UNREDACTOR="~/Applications/wifi-unredactor.app"
+WIFI_UNREDACTOR="$HOME/Applications/wifi-unredactor.app" # $HOME, not ~
 
 # Color theme chosing and import
 COLOR_SCHEME="rosepine-moon"

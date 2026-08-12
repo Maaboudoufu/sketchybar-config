@@ -1,29 +1,16 @@
 #!/bin/bash
-export RELPATH=$(dirname $0)/../..
-source $RELPATH/log_handler.sh
 
-## Private function
+##
+# Renders the date and clock.
+#
+# The clock carries seconds, so update_freq drives this once a second and there
+# is nothing left to align to a minute boundary — this used to sleep out the
+# remainder of the current minute to land the rollover precisely.
+#
+# One `date`, not two: the icon and label then always come from the same instant
+# rather than straddling a second boundary on the way past midnight.
+##
 
-# Updates time precisely
-update() {
-	#sendLog "Updating date..." "vomit"
+IFS='|' read -r DATE CLOCK < <(LC_TIME=ja_JP.UTF-8 date '+%-m月%-d日(%a)|%H:%M:%S')
 
-	# Check delay before next full minute
-	delay=$((59 - $(date '+%-S')))
-
-	sendLog "Sleeping before clock update for ${delay}s..." "vomit"
-
-	# Approximate waiting
-	sleep $delay
-
-	# 1/10 of a second precision
-	while [[ $(date '+%S') != "00" ]]; do
-		sleep 0.1
-	done
-
-	sketchybar --set $NAME icon="$(LC_TIME=ja_JP.UTF-8 date '+%-m月%-d日(%a)')" label="$(date '+%H:%M')"
-	sendLog "Updated date" "vomit"
-}
-
-## Main logic
-update
+sketchybar --set "${NAME:?}" icon="$DATE" label="$CLOCK"

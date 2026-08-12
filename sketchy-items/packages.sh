@@ -1,18 +1,25 @@
 #!/bin/bash
 
-## Scripts
-# Keep the existing item id so the More-menu layout remains unchanged.
-SCRIPT_CLAUDE="export PATH=$PATH; $RELPATH/plugins/packages/script.sh"
-
 ## Mascot image (native asset is 128x128, scaled down to fit the bar height)
 CLAUDE_MASCOT_MARGIN=6
 CLAUDE_MASCOT_SIZE=$(($BAR_HEIGHT - $CLAUDE_MASCOT_MARGIN * 2))
 CLAUDE_MASCOT_SCALE=$(bc <<<"scale=4; $CLAUDE_MASCOT_SIZE / 128")
 
+## Scripts
+# Keep the existing item id so the More-menu layout remains unchanged.
+# The mascot geometry and font are passed in because the script has to redraw
+# the icon itself when toggling back from the CPU/RAM view.
+SCRIPT_CLAUDE="export PATH=$PATH; $RELPATH/plugins/packages/script.sh $CLAUDE_MASCOT_SIZE $CLAUDE_MASCOT_SCALE \"$FONT\""
+SCRIPT_TOGGLE_USAGE="export PATH=$PATH; $RELPATH/plugins/usage/toggle.sh"
+
+# Start every config load in AI-usage mode, matching the update_freq below.
+rm -f "${TMPDIR}sketchybar/usage_mode"
+
 ## Item properties
 claude=(
   drawing=off
   script="$SCRIPT_CLAUDE"
+  click_script="$SCRIPT_TOGGLE_USAGE"
   icon=" "
   icon.drawing=on
   icon.width=$CLAUDE_MASCOT_SIZE

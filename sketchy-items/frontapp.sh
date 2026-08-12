@@ -2,7 +2,10 @@
 
 ## Scripts
 SCRIPT_FRONT_APP="export PATH=$PATH; $RELPATH/plugins/frontapp/script.sh"
-SCRIPT_CLICK_FRONT_APP="export PATH=$PATH; yabai -m window --toggle float"
+# The plugin, not an inline `yabai -m window --toggle float`: it is the same
+# command behind a `command -v yabai` guard, so on an aerospace/rift setup the
+# click logs instead of failing silently. The file existed but nothing used it.
+SCRIPT_CLICK_FRONT_APP="export PATH=$PATH; $RELPATH/plugins/frontapp/click.sh"
 
 ## Item properties
 front_app=(

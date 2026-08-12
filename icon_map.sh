@@ -1,10 +1,13 @@
 #!/bin/bash
-source ./log_handler.sh ## Sourcing needed because it can be called outside of sketchybarrc sourcing
+# Resolve relative to this file, not the caller's cwd (see set_colors.sh): a
+# wrong cwd here silently falls back to the stale built-in map instead of the
+# downloaded one, which shows up only as wrong app icons.
+__ICONS_DIR="${BASH_SOURCE[0]%/*}" # no dirname fork; see set_colors.sh
 
 # only Override if no dynamice icon map found
-if [[ -f ./dyn-icon_map.sh ]]; then 
-  source ./dyn-icon_map.sh
-else 
+if [[ -f "$__ICONS_DIR/dyn-icon_map.sh" ]]; then
+  source "$__ICONS_DIR/dyn-icon_map.sh"
+else
   __icon_map() {
     case $1 in
     "Brave Browser")
