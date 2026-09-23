@@ -1,6 +1,5 @@
 #!/bin/bash
 export RELPATH=$(dirname $0)/../..
-source $RELPATH/set_colors.sh
 shopt -s expand_aliases
 command -v 'ft-haptic' 2>/dev/null 1>&2 || alias ft-haptic="$RELPATH/ft-haptic"
 

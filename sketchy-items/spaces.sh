@@ -100,7 +100,7 @@ addRiftSpaces() {
 		space=("${dummy_space[@]}")
 		space+=(
 			icon="$sid"
-			script="$SCRIPT_SPACES $workspace"
+			script="$SCRIPT_SPACES"
 			drawing=on
 		)
 

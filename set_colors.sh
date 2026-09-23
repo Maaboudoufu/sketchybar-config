@@ -37,14 +37,11 @@ case "$COLOR_SCHEME" in
 	printf -v TFs '%02X' "$TFrate" # Set secondary transparency factor
 
 	# Default Theme colors
-	export BASE=0x${TFp}232136
-	export SURFACE=0x${TFp}2a273f
 	# Item chips get no blur of their own (sketchybar only blurs the bar/popup layer), so they sit
 	# on top of the bar's already-blurred surface as a flat tint — keep them at the slightly
 	# stronger TFs tier so they still read as distinct glass "buttons" against the bar.
 	export OVERLAY=0x${TFs}393552
 	export MUTED=0x${TFp}6e6a86
-	export HIGH_LOW=0x${TFs}2a283e
 	export HIGH_MED=0x${TFs}44415a
 	export HIGH_HIGH=0x${TFs}56526e
 	export SUBTLE=0xff908caa
@@ -55,9 +52,6 @@ case "$COLOR_SCHEME" in
 	export SELECT=0xff3e8fb0
 	export GLOW=0xff9ccfd8
 	export ACTIVE=0xffc4a7e7
-
-	export BLACK=0xff181926
-	export TRANSPARENT=0x00000000
 
 	# General bar colors
 	export BAR_COLOR=0x${TFp}232137
@@ -75,8 +69,6 @@ case "$COLOR_SCHEME" in
 # Catpuccin Mocha theme
 "catppuccin-mocha")
 	# Default Theme colors
-	export BASE=0xff1e1e2e
-	export SURFACE=0xff6c7086
 	export OVERLAY=0xff313244
 	export MUTED=0xff6e6a86
 	export SUBTLE=0xff908caa
@@ -89,12 +81,8 @@ case "$COLOR_SCHEME" in
 	export GLOW=0xff89dceb
 	export ACTIVE=0xffcba6f7
 
-	export HIGH_LOW=0xff1e1e2e
 	export HIGH_MED=0xff45475a
 	export HIGH_HIGH=0xff585b70
-
-	export BLACK=0xff11111b
-	export TRANSPARENT=0x00000000
 
 	# General bar colors
 	if [[ $BAR_TRANSPARENCY == true ]]; then

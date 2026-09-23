@@ -4,9 +4,10 @@ source $RELPATH/set_colors.sh
 source $RELPATH/log_handler.sh
 
 ## Information querying
-PERCENTAGE="$(pmset -g batt | grep -Eo "[0-9]+%" | cut -d% -f1)"
-ACCONNECTED="$(pmset -g batt | grep 'AC Power')"
-NOTCHARGING="$(pmset -g batt | grep 'not charging')"
+batt="$(pmset -g batt)"
+PERCENTAGE="$(grep -Eo "[0-9]+%" <<<"$batt" | cut -d% -f1)"
+ACCONNECTED="$(grep 'AC Power' <<<"$batt")"
+NOTCHARGING="$(grep 'not charging' <<<"$batt")"
 
 if [[ -z "$PERCENTAGE" ]]; then
 	sendWarn "No battery detected" "debug"

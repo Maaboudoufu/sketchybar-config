@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## Scripts
-SCRIPT_NOTIF="export PATH=$PATH; $RELPATH/plugins/notifications/script.sh $GITHUB_TOKEN"
+SCRIPT_NOTIF="export PATH=$PATH; $RELPATH/plugins/notifications/script.sh \"$GITHUB_TOKEN\""
 SCRIPT_CLICK_NOTIF="export PATH=$PATH; open \"https://github.com/notifications\""
 
 ## Item properties

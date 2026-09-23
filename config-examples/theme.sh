@@ -4,8 +4,6 @@
 
 if [[ "$COLOR_SCHEME" == "my-theme" ]]; then
 	# Default Theme colors
-	export BASE=0xff1e1e2e
-	export SURFACE=0xff6c7086
 	export OVERLAY=0xff313244
 	export MUTED=0xff6e6a86
 	export SUBTLE=0xff908caa
@@ -18,12 +16,8 @@ if [[ "$COLOR_SCHEME" == "my-theme" ]]; then
 	export GLOW=0xff89dceb
 	export ACTIVE=0xffcba6f7
 
-	export HIGH_LOW=0xff1e1e2e
 	export HIGH_MED=0xff45475a
 	export HIGH_HIGH=0xff585b70
-
-	export BLACK=0xff11111b
-	export TRANSPARENT=0x00000000
 
 	# General bar colors
 	export BAR_COLOR=0x80313244 #0xD9232136

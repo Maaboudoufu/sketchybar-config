@@ -15,7 +15,7 @@ menu_dummy=(
 for ((i = 1; i <= 14; ++i)); do
 	menu=("${menu_dummy[@]}")
 
-	menu+="icon=$i"
+	menu+=(icon=$i)
 	[ $i = 1 ] && menu+=( # Properties for application main menu
 		icon.font="$FONT:Heavy:14.0"
 		icon.color=$GLOW

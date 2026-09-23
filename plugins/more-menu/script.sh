@@ -119,9 +119,7 @@ graph_set() {
 		--set $NAME icon=$icon \
 		--trigger activities_update
 
-	[ $1 = "off" ] && for ((i = 0; i <= 140; ++i)); do
-		sketchybar --push graph 0.0
-	done
+	[ "$1" = "off" ] && sketchybar --push graph $(printf '0.0 %.0s' {1..141})
 }
 
 ## Main logic

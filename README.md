@@ -165,7 +165,6 @@ NOTCH_WIDTH=180         # Reserved width for the display notch
 MUSIC_INFO_WIDTH=80     # Width (px) for music title & subtitle labels
 MUSIC_SWAP_THRESHOLD=5  # Visible workspace count past which music swaps to right-of-notch (Aerospace only)
 CPU_UPDATE_FREQ=2       # Seconds between CPU graph samples
-MENUBAR_AUTOHIDE=True   # Whether to automatically hide the menu titles
 HIDE_EMPTY_SPACES=false # Only show workspaces that have windows (plus the focused one)
 GITHUB_TOKEN="~/.github_token" # Path to your GitHub Classic token (for notifications)
 WIFI_UNREDACTOR="~/Applications/wifi-unredactor.app" # Wifi unredactor path
@@ -215,7 +214,7 @@ If album/title text appears clipped by the notch, increase either:
 - `NOTCH_WIDTH` (reserves more center space), or
 - `MUSIC_INFO_WIDTH` (shrinks / expands label region; smaller can prevent collision with other center items).
 
-To reload after changing values: `sketchybar --reload` (tip: you can also ⇧+click on the cloverleaf logo to reload the config directly from the bar).
+To reload after changing values: `sketchybar --reload`.
 
 # Nix / Nix-Darwin Integration
 <details>

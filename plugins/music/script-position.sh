@@ -55,28 +55,28 @@ else
 	align=left
 fi
 
-# padding_left=0 / background.height=$ARTWORK_HEIGHT / padding_right=0 /
-# label.font.size below reset any in-progress "slide toward the notch" from
-# plugins/music/collision.sh's consumers (volume/more-menu/cpu-graph
-# temporarily shift these while music is at e) — a real q<->e transition
-# mid-shrink would otherwise leave music stuck shrunk and tiny-fonted, since
-# those consumers only know how to undo their own shift, not react to a
-# position change underneath them. Font sizes match music.sh's
-# music_title/music_subtitle definitions.
+# Undo an in-progress hide from plugins/music/collision.sh's consumers
+# (volume/more-menu/cpu-graph hide music while it's at e and they want that
+# same stretch of bar) — a real q<->e transition mid-hide would otherwise
+# leave music invisible forever, since those consumers only know how to undo
+# their own hide, not react to a position change underneath them. Only do
+# this if a consumer is actually why it's hidden right now: music can
+# legitimately be drawing=off with no collision consumer involved at all
+# (script-artwork.sh hides it whenever nothing is playing), and forcing it
+# back on in that case would reveal an empty widget.
 #
-# background.image.scale is the one property collision.sh's shrink touches
-# that this reset didn't otherwise restore: read whatever it stashed as the
-# pre-shrink original and put that back too, then wipe its bookkeeping
-# outright, since a position change makes any in-flight shrink meaningless
-# (collision.sh's own release() call, whenever the still-open consumer
-# eventually makes it, is already a no-op once its marker file is gone).
-reset_scale=()
-if [ -f "$MUSIC_SHRINK_SCALE_FILE" ]; then
-	reset_scale=(background.image.scale="$(cat "$MUSIC_SHRINK_SCALE_FILE")")
-	rm -rf "$MUSIC_SHRINK_DIR" "$MUSIC_SHRINK_SCALE_FILE"
-fi
+# padding_left=0/background.height/label.width/label.font.size are just the
+# normal per-position baseline (collision.sh no longer touches any of these,
+# so they're never anything other than this baseline already, but resetting
+# them here is free and one less thing to reason about). Wipe the shrink
+# bookkeeping outright since a position change makes any in-flight hide
+# meaningless (collision.sh's own release() call, whenever the still-open
+# consumer eventually makes it, is already a no-op once its marker is gone).
+force_drawing=()
+[ -d "$MUSIC_SHRINK_DIR" ] && [ -n "$(ls -A "$MUSIC_SHRINK_DIR" 2>/dev/null)" ] && force_drawing=(drawing=on)
+rm -rf "$MUSIC_SHRINK_DIR" "$MUSIC_SHRINK_MARKER"
 
 sketchybar --animate tanh 20 \
-	--set music position=$pos padding_left=0 background.height=$ARTWORK_HEIGHT "${reset_scale[@]}" \
-	--set music.title position=$pos padding_left=$title_padding_left label.align=$align label.font.size=10.0 \
-	--set music.subtitle position=$pos padding_left=$subtitle_padding_left label.align=$align padding_right=0 label.font.size=9.0
+	--set music position=$pos padding_left=0 background.height=$ARTWORK_HEIGHT "${force_drawing[@]}" \
+	--set music.title position=$pos padding_left=$title_padding_left label.align=$align label.width=$INFO_WIDTH label.font.size=10.0 "${force_drawing[@]}" \
+	--set music.subtitle position=$pos padding_left=$subtitle_padding_left label.align=$align padding_right=0 label.width=$INFO_WIDTH label.font.size=9.0 "${force_drawing[@]}"

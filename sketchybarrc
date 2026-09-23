@@ -18,7 +18,7 @@ mkdir -p "${TMPDIR}sketchybar"
 # from plugins/music/collision.sh (a consumer that never got to release
 # before this reload) is guaranteed stale the instant we get here. Clear it
 # before anything below can inherit or race against it.
-rm -rf "${TMPDIR}sketchybar/music_shrink" "${TMPDIR}sketchybar/music_shrink.scale"
+rm -rf "${TMPDIR}sketchybar/music_shrink" "${TMPDIR}sketchybar/music_shrink.first"
 
 ## Optional user configuration
 if [[ -n "$SKETCHYBAR_CONFIG" && -f "$SKETCHYBAR_CONFIG" ]]; then
@@ -36,7 +36,6 @@ fi
 : "${MUSIC_INFO_WIDTH:=80}"                                  # <int>
 : "${MUSIC_SWAP_THRESHOLD:=5}"                                # <int>
 : "${CPU_UPDATE_FREQ:=2}"                                    # <int>
-: "${MENUBAR_AUTOHIDE:=True}"                                # <true|false>
 : "${GITHUB_TOKEN:="$HOME/.github_token"}"                   # <path> (see WIFI_UNREDACTOR re: ~)
 : "${WIFI_UNREDACTOR:="$HOME/Applications/wifi-unredactor.app"}" # <path>
 # $HOME, not ~: a tilde inside double quotes stays literal, so the -e test in
@@ -50,9 +49,10 @@ fi
 
 ## WM detect if not already defined
 if [ -z "$WINDOW_MANAGER" ]; then
-	if command -v rift-cli >/dev/null; then WINDOW_MANAGER="rift"; fi
-	if command -v aerospace >/dev/null; then WINDOW_MANAGER="aerospace"; fi
-	if command -v yabai >/dev/null; then WINDOW_MANAGER="yabai"; fi
+	if command -v rift-cli >/dev/null; then WINDOW_MANAGER="rift"
+	elif command -v aerospace >/dev/null; then WINDOW_MANAGER="aerospace"
+	elif command -v yabai >/dev/null; then WINDOW_MANAGER="yabai"
+	fi
 fi
 
 ## Helpers sourcing
@@ -75,8 +75,6 @@ OS_MAJOR=${OS_VERSION%%.*} # parsed once, forklessly; used again for the radius
 if [ "$OS_MAJOR" -gt 15 ]; then
 	sendWarn "You are on a macOS version greater than macOS 15.x ($OS_VERSION), some features might not work properly" "info"
 fi
-
-[[ -f "$RELPATH/dyn-icon_map.sh" ]] && sendLog "Found dyn-icon_map.sh, using instead." "vomit"
 
 command -v 'menubar' 2>/dev/null 1>&2 || sendWarn "Binary \`menubar\` not in \$PATH, using bundled version" "debug"
 menubarImportCmd=$(if command -v 'menubar' 2>/dev/null 1>&2; then command -v 'menubar'; else echo "$RELPATH/menubar"; fi)
@@ -179,7 +177,6 @@ source "$RELPATH/sketchy-items/volume.sh"
 source "$RELPATH/sketchy-items/battery.sh"
 source "$RELPATH/sketchy-items/wifi.sh"
 source "$RELPATH/sketchy-items/display.sh"
-source "$RELPATH/sketchy-items/vpn.sh"
 source "$RELPATH/sketchy-items/more-menu.sh"
 source "$RELPATH/sketchy-items/packages.sh"
 source "$RELPATH/sketchy-items/currentuser.sh"

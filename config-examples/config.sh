@@ -17,9 +17,6 @@ MUSIC_SWAP_THRESHOLD=5
 # CPU graph update frequency (seconds)
 CPU_UPDATE_FREQ=2
 
-# Hide automatically menubar items (left click on logo)
-MENUBAR_AUTOHIDE=False
-
 # Included native menubar items 
 # Replace " " by "__" and query with `sketchybar --query default_menu_items` 
 MENU_CONTROLS=(
