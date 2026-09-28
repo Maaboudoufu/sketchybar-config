@@ -53,7 +53,10 @@ BAR_HEIGHT="$2"
 
 ### Open a stream to get current media continously
 
-media-control stream | grep --line-buffered 'data' | while IFS= read -r line; do
+# --no-diff: in diff mode an absent artworkData means "unchanged", so switching
+# from a source with artwork (Spotify) to one without (YouTube in a browser)
+# left the old cover next to the new title. Full payloads make absent mean absent.
+media-control stream --no-diff | grep --line-buffered 'data' | while IFS= read -r line; do
 	### List & store childs to prevent multiple background process remaining
 	# Introduced because of a present bug, were the stream process detaches from the parent process causing stray processes
 
@@ -63,10 +66,10 @@ media-control stream | grep --line-buffered 'data' | while IFS= read -r line; do
 
 	### Parse every field of this line in one jq call instead of nine separate
 	### echo|jq forks (each field re-parsed $line fresh) — same values, 1 fork/line.
-	IFS=$'\t' read -r payload_empty artworkData currentPID playing title artist album diff < <(
+	IFS=$'\t' read -r payload_empty artworkData currentPID playing title artist album < <(
 		jq -r '[(.payload=={}), (.payload.artworkData//"null"), (.payload.processIdentifier//"null"),
 		        (.payload.playing//"null"), (.payload.title//"null"), (.payload.artist//"null"),
-		        (.payload.album//"null"), (.diff//"null")] | @tsv' <<<"$line"
+		        (.payload.album//"null")] | @tsv' <<<"$line"
 	)
 
 	if ! {
@@ -77,7 +80,9 @@ media-control stream | grep --line-buffered 'data' | while IFS= read -r line; do
 
 		### Set Artwork
 
-		if [[ $artworkData != "null" ]]; then
+		if [[ $artworkData == "null" && $lastArtwork != "null" ]]; then
+			sketchybar --set $NAME background.image.drawing=off
+		elif [[ $artworkData != "null" && $artworkData != "$lastArtwork" ]]; then
 
 			tmpfile=$(mktemp ${TMPDIR}sketchybar/cover.XXXXXXXXXX)
 
@@ -125,11 +130,13 @@ media-control stream | grep --line-buffered 'data' | while IFS= read -r line; do
 
 				sketchybar --set $NAME background.image=$tmpfile.$ext \
 					background.image.scale=$scale \
+					background.image.drawing=on \
 					icon.width=$(printf "%.0f" $icon_width)
 			fi
 
 			rm -f $tmpfile* && sendLog "Cleaned artwork image generated at $tmpfile.$ext" "vomit"
 		fi
+		lastArtwork=$artworkData
 
 		### Set Title and artist + ?Album
 
@@ -148,7 +155,9 @@ media-control stream | grep --line-buffered 'data' | while IFS= read -r line; do
 
 		### Set Playing state indicator
 
-		if [[ $playing != "null" && $diff == "true" ]]; then
+		# Only on an actual change (full payloads repeat it every event); skip the
+		# very first event so a reload doesn't flash the indicator.
+		if [[ $playing != "null" && -n $lastPlaying && $playing != "$lastPlaying" ]]; then
 			case $playing in
 			"true")
 				sendLog "Updating playing state to play" "vomit"
@@ -174,6 +183,8 @@ media-control stream | grep --line-buffered 'data' | while IFS= read -r line; do
 				;;
 			esac
 		fi
+
+		[[ $playing != "null" ]] && lastPlaying=$playing
 
 		### Store app currently playing media to check for it's presence later
 
