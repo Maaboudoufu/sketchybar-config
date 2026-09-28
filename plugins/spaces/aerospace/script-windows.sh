@@ -32,13 +32,8 @@ update_workspace_windows() {
 				echo $icon_result
 			)"
 		done <<<"${apps}"
+		# background.drawing (the focus chip) is owned by script-space.sh's update().
 		sketchybar --set space.$workspace_id drawing=on label="$icon_strip" label.drawing=on
-
-		if ! [ "$FOCUSED_WORKSPACE" = "$workspace_id" ]; then
-			sketchybar --set space.$workspace_id background.drawing=on
-		else
-			sketchybar --set space.$workspace_id background.drawing=off
-		fi
 
 	else
 		# No apps in workspace, hide label (and the whole item too, unless
@@ -47,7 +42,7 @@ update_workspace_windows() {
 		if [ "$hide_empty" = "true" ] && [ "$FOCUSED_WORKSPACE" != "$workspace_id" ]; then
 			sketchybar --set space.$workspace_id drawing=off
 		else
-			sketchybar --set space.$workspace_id drawing=on label.drawing=off background.drawing=off
+			sketchybar --set space.$workspace_id drawing=on label.drawing=off
 		fi
 	fi
 }

@@ -37,7 +37,7 @@ update() {
 	fi
 
 	sketchybar --animate tanh 20 --set $NAME \
-		icon.highlight=$SELECTED \
+		icon.highlight=$SELECTED background.drawing=$SELECTED \
 		label.width=$WIDTH
 }
 

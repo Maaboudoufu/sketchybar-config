@@ -24,8 +24,8 @@ else
 fi
 
 update() {
-	sketchybar --animate tanh 20 --set $NAME \
-		icon.highlight=$SELECTED \
+	sketchybar --animate tanh 6 --set $NAME \
+		icon.highlight=$SELECTED background.drawing=$SELECTED \
 		label.width=dynamic
 
 }
@@ -52,9 +52,8 @@ case "$SENDER" in
 	fi
 	;;
 *)
-	# Update icons
-	$RELPATH/plugins/spaces/aerospace/script-windows.sh "$WORKSPACE_ID" "$HIDE_EMPTY_SPACES"
-	# Update focused state
+	# Focus state first so the highlight flips before the slower icon refresh
 	update
+	$RELPATH/plugins/spaces/aerospace/script-windows.sh "$WORKSPACE_ID" "$HIDE_EMPTY_SPACES"
 	;;
 esac

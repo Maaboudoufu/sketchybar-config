@@ -49,13 +49,14 @@ case "$COLOR_SCHEME" in
 	export CRITICAL=0xffeb6f92
 	export NOTICE=0xfff6c177
 	export WARN=0xffea9a97
-	export SELECT=0xff3e8fb0
-	export GLOW=0xff9ccfd8
-	export ACTIVE=0xffc4a7e7
+	# Decorative accents are neutral; colour is reserved for real alerts above.
+	export SELECT=$TEXT
+	export GLOW=$SUBTLE
+	export ACTIVE=$TEXT
 
 	# General bar colors
 	export BAR_COLOR=0x${TFp}232137
-	export BORDER_COLOR=0x5AFFFFFF # translucent white rim, like a glass edge highlight
+	export BORDER_COLOR=0x1AFFFFFF # faint rim, just enough to separate chips
 
 	export ICON_COLOR=$TEXT  # Color of all icons
 	export LABEL_COLOR=$TEXT # Color of all labels

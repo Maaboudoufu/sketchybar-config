@@ -4,14 +4,14 @@
 dummy_space=(
 	icon.padding_left=6
 	icon.padding_right=7
-	icon.color=$NOTICE
+	icon.color=$SUBTLE
 	padding_left=3
 	padding_right=3
-	background.color=$HIGH_MED
+	background.color=0x1CFFFFFF # focused-space chip: neutral, a step above the app-icon chips
 	background.height=$(($BAR_HEIGHT - 12))
 	background.corner_radius=$(($ZONE_CORNER_RADIUS - 2))
 	background.drawing=off
-	icon.highlight_color=$CRITICAL
+	icon.highlight_color=$TEXT
 	label.padding_right=20
 	label.font="sketchybar-app-font:Regular:16.0"
 	label.background.height=$(($BAR_HEIGHT - 12))

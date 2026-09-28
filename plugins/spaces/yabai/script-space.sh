@@ -54,7 +54,7 @@ update() {
 		sketchybar --set $NAME background.drawing=off
 	fi
 
-	sketchybar --animate tanh 20 --set $NAME icon.highlight=$SELECTED label.width=$WIDTH
+	sketchybar --animate tanh 20 --set $NAME icon.highlight=$SELECTED background.drawing=$SELECTED label.width=$WIDTH
 }
 
 ## Main logic
